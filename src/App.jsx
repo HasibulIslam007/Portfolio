@@ -1,7 +1,7 @@
 import Hero from "./sections/Hero.jsx";
 import ShowcaseSection from "./sections/ShowcaseSection.jsx";
 import Navbar from "./sections/Navbar.jsx";
-import LogoShowcase from "./sections/LogoShowcase.jsx";
+
 import FeatureCards from "./sections/FeatureCards.jsx";
 import TechStack from "./sections/TechStack.jsx";
 import Contact from "./sections/Contact.jsx";
@@ -15,7 +15,7 @@ const App = () => {
       <Hero />
       <AboutMe />
       <ShowcaseSection />
-      <LogoShowcase />
+
       <FeatureCards />
       <Contact />
       <TechStack />
