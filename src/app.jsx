@@ -7,10 +7,7 @@ import TechStack from "./sections/TechStack.jsx";
 import Contact from "./sections/Contact.jsx";
 import Footer from "./sections/Footer.jsx";
 import AboutMe from "./sections/Aboutme.jsx";
-//import TechStack from "./sections/TechStack.jsx";
-//import Experience from "./sections/Experience.jsx";
-//import FeatureCards from "./sections/FeatureCards.jsx";
-//import Experience from "./sections/Experience.jsx";
+
 const App = () => {
   return (
     <>
