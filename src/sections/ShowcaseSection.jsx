@@ -145,27 +145,31 @@ const ProjectCard = ({
 
         {/* Buttons */}
         <div className="mt-6 flex gap-4 flex-wrap justify-center">
-          <button
-            onClick={() => window.open(source_code_link, "_blank")}
-            className="p-0 bg-transparent hover:opacity-80 transition"
-          >
-            <img
-              src="/public/images/github.png"
-              alt="View Code"
-              className="w-8 h-8 object-contain"
-            />
-          </button>
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={() => window.open(source_code_link, "_blank")}
+              className="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition duration-300 border border-white/10 shadow-md"
+              aria-label="View GitHub Code"
+            >
+              <img
+                src="/images/github.png" // ✅ no /public
+                alt="GitHub"
+                className="w-6 h-6 object-contain"
+              />
+            </button>
 
-          <button
-            onClick={() => window.open(source_code_link_vercel, "_blank")}
-            className="p-0 hover:opacity-80 transition"
-          >
-            <img
-              src="/public/images/vercel.svg"
-              alt="View Site"
-              className="w-10 h-10 object-contain"
-            />
-          </button>
+            <button
+              onClick={() => window.open(source_code_link_vercel, "_blank")}
+              className="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition duration-300 border border-white/10 shadow-md"
+              aria-label="View Live Site on Vercel"
+            >
+              <img
+                src="/images/vercel.svg"
+                alt="Vercel"
+                className="w-6 h-6 object-contain"
+              />
+            </button>
+          </div>
         </div>
       </motion.div>
     </motion.div>
