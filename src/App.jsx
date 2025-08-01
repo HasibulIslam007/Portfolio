@@ -17,6 +17,7 @@ const App = () => {
       <ShowcaseSection />
 
       <FeatureCards />
+
       <Contact />
       <TechStack />
       <Footer />

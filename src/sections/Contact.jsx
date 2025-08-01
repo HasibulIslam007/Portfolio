@@ -1,8 +1,9 @@
+// Contact.jsx
 import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
 import TitleHeader from "../components/TitleHeader";
-import ContactExperience from "../components/contact/ContactExperience.jsx";
 
 const Contact = () => {
   const formRef = useRef(null);
@@ -20,7 +21,7 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show loading state
+    setLoading(true);
 
     try {
       await emailjs.sendForm(
@@ -29,33 +30,38 @@ const Contact = () => {
         formRef.current,
         import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY
       );
-
-      // Reset form and stop loading
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error("EmailJS Error:", error); // Optional: show toast
+      console.error("EmailJS Error:", error);
     } finally {
-      setLoading(false); // Always stop loading, even on error
+      setLoading(false);
     }
   };
 
   return (
-    <section id="contact" className="flex-center section-padding">
+    <section
+      id="contact"
+      className="flex-center section-padding bg-black text-white"
+    >
       <div className="w-full h-full md:px-10 px-5">
         <TitleHeader
           title="Get in Touch – Let’s Connect"
           sub="💬 Have questions or ideas? Let’s talk! 🚀"
         />
-        <div className="grid-12-cols mt-16">
+
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 mt-16">
+          {/* Left: Contact Form */}
           <div className="xl:col-span-5">
-            <div className="flex-center card-border rounded-xl p-10">
+            <div className="flex-center card-border rounded-xl p-10 bg-[#121212] shadow-lg">
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
                 className="w-full flex flex-col gap-7"
               >
                 <div>
-                  <label htmlFor="name">Your name</label>
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Your name
+                  </label>
                   <input
                     type="text"
                     id="name"
@@ -63,12 +69,15 @@ const Contact = () => {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="What’s your good name?"
+                    className="mt-1 w-full p-3 rounded-lg bg-[#262626] text-white border border-gray-700 outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email">Your Email</label>
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Your Email
+                  </label>
                   <input
                     type="email"
                     id="email"
@@ -76,12 +85,15 @@ const Contact = () => {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="What’s your email address?"
+                    className="mt-1 w-full p-3 rounded-lg bg-[#262626] text-white border border-gray-700 outline-none"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message">Your Message</label>
+                  <label htmlFor="message" className="text-sm font-medium">
+                    Your Message
+                  </label>
                   <textarea
                     id="message"
                     name="message"
@@ -89,28 +101,65 @@ const Contact = () => {
                     onChange={handleChange}
                     placeholder="How can I help you?"
                     rows="5"
+                    className="mt-1 w-full p-3 rounded-lg bg-[#262626] text-white border border-gray-700 outline-none"
                     required
                   />
                 </div>
 
-                <button type="submit">
-                  <div className="cta-button group">
-                    <div className="bg-circle" />
-                    <p className="text">
-                      {loading ? "Sending..." : "Send Message"}
-                    </p>
-                    <div className="arrow-wrapper">
-                      <img src="/images/arrow-down.svg" alt="arrow" />
-                    </div>
-                  </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-lg bg-blue-100 text-black font-semibold hover:bg-blue-200 transition"
+                >
+                  {loading ? "Sending..." : "SEND MESSAGE"}
                 </button>
               </form>
             </div>
           </div>
-          <div className="xl:col-span-7 min-h-96">
-            <div className="bg-[#cd7c2e] w-full h-full hover:cursor-grab rounded-3xl overflow-hidden">
 
-            </div>
+          {/* Right: Contact Info */}
+          <div className="xl:col-span-7 min-h-96 ">
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="w-full h-full flex justify-center items-center"
+            >
+              <div className="flex flex-col md:flex-row items-center gap-6 p-8 bg-white/10 backdrop-blur-xl rounded-2xl border border-white/10 shadow-xl max-w-2xl w-full">
+                {/* Left: Contact Details */}
+                <div className="flex-1 text-white space-y-3 text-center md:text-left">
+                  <h3 className="text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
+                    📇 Contact Info
+                  </h3>
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-sm">
+                    <span>👤</span>
+                    <span>MD Hasibul Islam</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-sm">
+                    <span>📞</span>
+                    <span>01719313438</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-sm">
+                    <span>✉️</span>
+                    <a
+                      href="mailto:hasibulislam.bracu@gmail.com"
+                      className="underline"
+                    >
+                      hasibulislam.bracu@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Right: Memoji Image */}
+                <div className="w-24 h-24 shrink-0">
+                  <img
+                    src="/public/models/image.png"
+                    alt="Memoji"
+                    className="w-full h-full rounded-full object-cover border-2 border-white/20 shadow-lg"
+                  />
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

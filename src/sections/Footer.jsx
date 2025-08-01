@@ -25,7 +25,7 @@ const Footer = () => {
               <FaGithub />
             </a>
             <a
-              href="https://linkedin.com/in/yourusername"
+              href="www.linkedin.com/in/md-hasibul-islam-ooo7"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-cyan-400 transition"
@@ -33,7 +33,7 @@ const Footer = () => {
               <FaLinkedin />
             </a>
             <a
-              href="https://facebook.com/yourusername"
+              href="https://www.facebook.com/share/16qWUBWBJw/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-cyan-400 transition"
