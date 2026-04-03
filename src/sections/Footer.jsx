@@ -25,7 +25,11 @@ const Footer = () => {
               <FaGithub />
             </a>
             <a
+<<<<<<< HEAD
               href="www.linkedin.com/in/md-hasibul-islam-ooo7"
+=======
+              href="https://www.linkedin.com/in/md-hasibul-islam-ooo7"
+>>>>>>> Added new
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-cyan-400 transition"

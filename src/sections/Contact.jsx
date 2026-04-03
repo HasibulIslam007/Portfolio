@@ -1,13 +1,31 @@
 // Contact.jsx
+<<<<<<< HEAD
 import { useRef, useState } from "react";
+=======
+import { useState } from "react";
+>>>>>>> Added new
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
 import TitleHeader from "../components/TitleHeader";
+<<<<<<< HEAD
 
 const Contact = () => {
   const formRef = useRef(null);
   const [loading, setLoading] = useState(false);
+=======
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+
+const Model = () => {
+  const { scene } = useGLTF("/models/object_0.glb");
+  return <primitive object={scene} scale={2} />;
+};
+
+const Contact = () => {
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState({ type: "", message: "" });
+>>>>>>> Added new
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -22,6 +40,7 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+<<<<<<< HEAD
 
     try {
       await emailjs.sendForm(
@@ -33,6 +52,46 @@ const Contact = () => {
       setForm({ name: "", email: "", message: "" });
     } catch (error) {
       console.error("EmailJS Error:", error);
+=======
+    setStatus({ type: "", message: "" });
+
+    try {
+      const serviceId = import.meta.env.VITE_APP_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_APP_EMAILJS_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error("Missing EmailJS environment variables.");
+      }
+
+      const templateParams = {
+        name: form.name,
+        email: form.email,
+        message: form.message,
+        from_name: form.name,
+        reply_to: form.email,
+      };
+
+      await emailjs.send(serviceId, templateId, templateParams, {
+        publicKey,
+      });
+
+      setForm({ name: "", email: "", message: "" });
+      setStatus({
+        type: "success",
+        message: "Thanks! Your message has been sent.",
+      });
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      const message =
+        error?.message === "Missing EmailJS environment variables."
+          ? "EmailJS is not configured. Please check your .env values."
+          : "Something went wrong. Please try again in a moment.";
+      setStatus({
+        type: "error",
+        message,
+      });
+>>>>>>> Added new
     } finally {
       setLoading(false);
     }
@@ -53,11 +112,15 @@ const Contact = () => {
           {/* Left: Contact Form */}
           <div className="xl:col-span-5">
             <div className="flex-center card-border rounded-xl p-10 bg-[#121212] shadow-lg">
+<<<<<<< HEAD
               <form
                 ref={formRef}
                 onSubmit={handleSubmit}
                 className="w-full flex flex-col gap-7"
               >
+=======
+              <form onSubmit={handleSubmit} className="w-full flex flex-col gap-7">
+>>>>>>> Added new
                 <div>
                   <label htmlFor="name" className="text-sm font-medium">
                     Your name
@@ -108,10 +171,30 @@ const Contact = () => {
 
                 <button
                   type="submit"
+<<<<<<< HEAD
                   className="w-full py-3 rounded-lg bg-blue-100 text-black font-semibold hover:bg-blue-200 transition"
                 >
                   {loading ? "Sending..." : "SEND MESSAGE"}
                 </button>
+=======
+                  disabled={loading}
+                  className="w-full py-3 rounded-lg bg-blue-100 text-black font-semibold hover:bg-blue-200 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Sending..." : "SEND MESSAGE"}
+                </button>
+                {status.message && (
+                  <p
+                    className={`text-sm ${
+                      status.type === "success"
+                        ? "text-emerald-400"
+                        : "text-rose-400"
+                    }`}
+                    aria-live="polite"
+                  >
+                    {status.message}
+                  </p>
+                )}
+>>>>>>> Added new
               </form>
             </div>
           </div>
@@ -151,6 +234,7 @@ const Contact = () => {
                 </div>
 
                 {/* Right: Memoji Image */}
+<<<<<<< HEAD
                 <div className="w-24 h-24 shrink-0">
                   <img
                     src="/public/models/image.png"
@@ -158,6 +242,22 @@ const Contact = () => {
                     className="w-full h-full rounded-full object-cover border-2 border-white/20 shadow-lg"
                   />
                 </div>
+=======
+<div className="w-40 h-40 md:w-52 md:h-52 shrink-0 ">
+  <Canvas className="w-full h-full" camera={{ position: [0, 0, 2.5], fov: 45 }}>
+    
+    <ambientLight intensity={1} />
+    <directionalLight position={[3, 5, 8]} intensity={5} />
+    <directionalLight position={[-2, 5, 9]} intensity={1} />
+    <pointLight position={[0, -2, 2]} intensity={1.5} />
+
+    <Model />
+
+    <OrbitControls enableZoom={false}  />
+
+  </Canvas>
+</div>
+>>>>>>> Added new
               </div>
             </motion.div>
           </div>

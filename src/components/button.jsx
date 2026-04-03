@@ -5,6 +5,7 @@
  */
 
 const Button = ({ text, className, id }) => {
+<<<<<<< HEAD
     return (
         <a
             onClick={(e) => {
@@ -25,6 +26,28 @@ const Button = ({ text, className, id }) => {
                 }
             }}
             className={`${className ?? ""} cta-wrapper`} // Add base + extra class names
+=======
+    const handleClick = (e) => {
+        e.preventDefault();
+
+        if (!id) return;
+
+        const target = document.getElementById(id);
+        if (!target) return;
+
+        const offset = window.innerHeight * 0.15;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+        window.scrollTo({ top, behavior: "smooth" });
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={handleClick}
+            className={`${className ?? ""} cta-wrapper bg-transparent border-0 p-0`}
+            aria-label={text}
+>>>>>>> Added new
         >
             <div className="cta-button group">
                 <div className="bg-circle" />
@@ -33,7 +56,11 @@ const Button = ({ text, className, id }) => {
                     <img src="/images/arrow-down.svg" alt="arrow" />
                 </div>
             </div>
+<<<<<<< HEAD
         </a>
+=======
+        </button>
+>>>>>>> Added new
     );
 };
 
