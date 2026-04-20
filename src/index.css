@@ -7,11 +7,11 @@
 
 html,
 body {
-<<<<<<< HEAD
+
   width: 100dvw;
-=======
+
   width: 100%;
->>>>>>> Added new
+
   overflow-x: hidden;
   background-color: black;
   color: white;
@@ -20,11 +20,11 @@ body {
 }
 
 section {
-<<<<<<< HEAD
+
   width: 100dvw;
-=======
+
   width: 100%;
->>>>>>> Added new
+
 }
 
 @theme {
@@ -404,11 +404,7 @@ section {
 
 /* marquee */
 .marquee {
-<<<<<<< HEAD
-  width: 100dvw;
-=======
   width: 100%;
->>>>>>> Added new
   overflow: hidden;
   position: relative;
 }

@@ -84,7 +84,6 @@ const techStackImgs = [
   },
 ];
 
-<<<<<<< HEAD
 const expCards = [
   {
     review:
@@ -206,19 +205,14 @@ const socialImgs = [
   },
 ];
 
-=======
->>>>>>> Added new
 export {
   words,
   abilities,
   counterItems,
-<<<<<<< HEAD
   expCards,
   expLogos,
   testimonials,
   socialImgs,
-=======
->>>>>>> Added new
   techStackImgs,
   navLinks,
 };

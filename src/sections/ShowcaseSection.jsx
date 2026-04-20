@@ -146,29 +146,14 @@ const ProjectCard = ({
         {/* Buttons */}
         <div className="mt-6 flex gap-4 flex-wrap justify-center">
           <div className="flex gap-4 mt-4">
-<<<<<<< HEAD
-            <button
-              onClick={() => window.open(source_code_link, "_blank")}
-=======
             <a
               href={source_code_link}
               target="_blank"
               rel="noopener noreferrer"
->>>>>>> Added new
               className="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition duration-300 border border-white/10 shadow-md"
               aria-label="View GitHub Code"
             >
               <img
-<<<<<<< HEAD
-                src="/images/github.png" // ✅ no /public
-                alt="GitHub"
-                className="w-6 h-6 object-contain"
-              />
-            </button>
-
-            <button
-              onClick={() => window.open(source_code_link_vercel, "_blank")}
-=======
                 src="/images/github.png"
                 alt="GitHub"
                 className="w-6 h-6 object-contain"
@@ -179,7 +164,6 @@ const ProjectCard = ({
               href={source_code_link_vercel}
               target="_blank"
               rel="noopener noreferrer"
->>>>>>> Added new
               className="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition duration-300 border border-white/10 shadow-md"
               aria-label="View Live Site on Vercel"
             >
@@ -188,11 +172,7 @@ const ProjectCard = ({
                 alt="Vercel"
                 className="w-6 h-6 object-contain"
               />
-<<<<<<< HEAD
-            </button>
-=======
             </a>
->>>>>>> Added new
           </div>
         </div>
       </motion.div>
