@@ -1,68 +1,99 @@
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import SectionHeader from "../components/shared/SectionHeader.jsx";
+import Reveal from "../components/shared/Reveal.jsx";
+import Divider from "../components/shared/Divider.jsx";
+import TechTags from "../components/Projects/TechTags.jsx";
+import { techGroups } from "../constants/techStack.js";
 
-import TitleHeader from "../components/TitleHeader";
-import { techStackImgs } from "../constants";
-
-const TechStack = () => {
-  useGSAP(() => {
-    gsap.fromTo(
-      ".tech-card",
-      {
-        y: 50,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power2.inOut",
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: "#skills",
-          start: "top center",
-        },
-      }
-    );
-  });
-
-  return (
+/**
+ * Phase 2C — "03 / STACK" section.
+ *
+ * Editorial category rows answering "what can this engineer actually
+ * build": each technology below is verified against the portfolio —
+ * project data (constants/projects.js), package files and hero copy —
+ * and named in the group `evidence` line so the claim is traceable.
+ * Compact mono labels (shared TechTags) rather than a logo wall; no
+ * icons, no marquee, no animation library beyond the shared Reveal.
+ *
+ * Anchor clearance comes from the shared `section { scroll-margin-top }`
+ * rule in index.css (same strategy as Phase 1 / 2A / 2B).
+ */
+const TechStack = () => (
+  <section
+    id="stack"
+    aria-labelledby="stack-heading"
+    className="relative bg-ink text-fg"
+  >
+    {/* Atmosphere: faint rim glow + film grain (static, cheap) */}
     <div
-      id="skills"
-      className="flex min-h-screen items-center justify-center section-padding bg-black"
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
-      <div className="w-full max-w-7xl h-full md:px-10 px-5">
-        <TitleHeader
-          title="That Drive My Development Workflow"
-          sub="🚀 Powered by Codee"
-        />
-
-        {/* Outer glass container */}
-        <div className="mt-10 rounded-3xl p-8 sm:p-10 bg-gradient-to-br from-[#1e1e1e]/60 to-[#0e0e0e]/70 backdrop-blur-xl shadow-[0_0_30px_rgba(0,255,255,0.2)] border border-white/10">
-          {/* Responsive Grid: 2 cols on small, 4 cols on lg */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
-            {techStackImgs.map((techStackIcon, index) => (
-              <div
-                key={index}
-                className="card-border tech-card group rounded-xl w-[120px] h-[140px] bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-all duration-300 flex flex-col justify-center items-center shadow-md border border-white/5"
-              >
-                <div className="w-12 h-12 mb-2">
-                  <img
-                    src={techStackIcon.imgPath}
-                    alt={techStackIcon.name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="text-xs font-medium text-white text-center px-1">
-                  {techStackIcon.name}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(70%_45%_at_85%_0%,rgba(255,38,56,0.05),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_5%_100%,rgba(122,16,24,0.10),transparent_65%)]" />
+      <div className="hero-noise absolute inset-0 opacity-[0.03]" />
     </div>
-  );
-};
+
+    <div className="section-shell">
+      <Divider className="mb-9 md:mb-12" />
+
+      <Reveal delay={0.05}>
+        <SectionHeader
+          index="03"
+          label="Stack"
+          headingId="stack-heading"
+          className="max-w-2xl"
+          title={
+            <>
+              What I build with<span className="text-blood">.</span>
+            </>
+          }
+          description={
+            <p>
+              The technologies behind my project work, grouped by the part of
+              the system they help build.
+            </p>
+          }
+        />
+      </Reveal>
+
+      <ul className="mt-12 border-b border-hairline md:mt-16">
+        {techGroups.map((group, index) => (
+          <li
+            key={group.id}
+            className="group border-t border-hairline transition-colors duration-300 hover:border-blood-line focus-within:border-blood-line"
+          >
+            <Reveal delay={Math.min(index * 0.06, 0.24)}>
+              <div className="grid gap-x-12 gap-y-5 py-7 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:py-8">
+                {/* Category */}
+                <div className="min-w-0">
+                  <p
+                    aria-hidden="true"
+                    className="font-mono text-[11px] font-medium tracking-[0.18em] text-fg-dim transition-colors duration-300 group-hover:text-blood"
+                  >
+                    {group.index}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold tracking-tight text-fg transition-transform duration-300 group-hover:translate-x-1 group-focus-within:translate-x-1 md:text-xl">
+                    {group.title}
+                  </h3>
+                  <p className="mt-1.5 max-w-md text-sm leading-relaxed text-fg-muted">
+                    {group.description}
+                  </p>
+                  <p className="mt-2 font-mono text-[10px] leading-relaxed tracking-[0.14em] text-fg-dim uppercase">
+                    Evidence — {group.evidence}
+                  </p>
+                </div>
+
+                {/* Technologies */}
+                <div className="min-w-0 md:pt-1">
+                  <TechTags tags={group.items} />
+                </div>
+              </div>
+            </Reveal>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+);
 
 export default TechStack;

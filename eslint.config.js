@@ -5,7 +5,9 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // `dist` is build output; `.kilo` holds an unrelated agent worktree
+  // (a separate copy of the app) that must not be linted or built.
+  globalIgnores(['dist', '.kilo']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

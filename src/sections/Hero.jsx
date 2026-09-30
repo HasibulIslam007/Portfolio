@@ -1,76 +1,52 @@
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-
-import Button from "../components/button.jsx";
-import { words } from "../constants";
-import HeroExperience from "../components/HeroModels/HeroExperience.jsx";
+import HeroContent from "../components/hero/HeroContent.jsx";
+import HeroScene from "../components/hero/HeroScene.jsx";
+import FloatingCards from "../components/hero/FloatingCards.jsx";
+import TechStrip from "../components/hero/TechStrip.jsx";
 import AnimatedCounter from "../components/HeroModels/AnimatedCounter.jsx";
 
+/**
+ * Phase 1 hero — cinematic dark/red foundation.
+ *
+ * Layout: left column ≈54% (copy), right column ≈46% (3D workspace).
+ * On mobile everything stacks in spec order:
+ * badge → headline → description → CTAs → socials → 3D model →
+ * IELTSHUB card → tech strip.
+ *
+ * Entrance sequencing lives in HeroContent (GSAP), floating UI in
+ * FloatingCards/TechStrip (Framer Motion) and continuous motion in the
+ * R3F components (useFrame).
+ */
 const Hero = () => {
-  useGSAP(() => {
-    gsap.fromTo(
-      ".hero-text h1",
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" }
-    );
-  });
-
   return (
-    <section id="hero" className="relative overflow-hidden">
-      <div className="absolute top-0 left-0 z-10">
-        <img src="/images/bg.png" alt="" />
+    <section id="hero" className="relative overflow-hidden bg-ink">
+      {/* Atmosphere: red rim glow, deep charcoal wash, film grain */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_75%_35%,rgba(255,38,56,0.07),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(90%_60%_at_20%_85%,rgba(122,16,24,0.16),transparent_65%)]" />
+        <div className="hero-noise absolute inset-0 opacity-[0.045]" />
+        {/* bottom fade into the next section */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-ink" />
       </div>
 
-      <div className="hero-layout">
-        {/* LEFT: Hero Content */}
-        <header className="flex flex-col justify-center md:w-full w-screen md:px-20 px-5">
-          <div className="flex flex-col gap-7">
-            <div className="hero-text">
-              <h1>
-                Transforming
-                <span className="slide">
-                  <span className="wrapper">
-                    {words.map((word, index) => (
-                      <span
-                        key={index}
-                        className="flex items-center md:gap-3 gap-1 pb-2"
-                      >
-                        <img
-                          src={word.imgPath}
-                          alt="person"
-                          className="xl:size-12 md:size-10 size-7 md:p-2 p-1 rounded-full bg-white-50"
-                        />
-                        <span>{word.text}</span>
-                      </span>
-                    ))}
-                  </span>
-                </span>
-              </h1>
-              <h1>into Digital Experiences</h1>
-              <h1>that Solve Real Problems</h1>
+      <div className="relative z-10 mx-auto flex min-h-svh w-full max-w-[1440px] flex-col px-5 md:px-10 xl:px-16">
+        <div className="grid flex-1 items-center gap-y-12 pb-10 pt-28 md:pt-32 lg:grid-cols-[54fr_46fr] lg:gap-x-8 lg:pt-36">
+          {/* LEFT — copy */}
+          <HeroContent />
+
+          {/* RIGHT — 3D workspace + floating cards */}
+          <figure className="relative m-0 flex flex-col">
+            <div className="hero-stage">
+              <HeroScene />
             </div>
+            <FloatingCards />
+          </figure>
+        </div>
 
-            <p className="text-white-50 md:text-xl relative z-10 pointer-events-none w-md-full md:w-3/4">
-              Hi, I’m Hasibul Islam, a Full-stack developer with a passion for
-              creating innovative solutions.
-            </p>
-
-            <Button
-              text="See My Work"
-              className="md:w-80 md:h-16 w-60 h-12"
-              id="counter"
-            />
-          </div>
-        </header>
-
-        {/* RIGHT: 3D Model or Visual */}
-        <figure>
-          <div className="hero-3d-layout">
-            <HeroExperience />
-          </div>
-        </figure>
+        {/* BOTTOM — tech strip */}
+        <TechStrip />
       </div>
 
+      {/* existing counter block below the hero (kept as-is) */}
       <AnimatedCounter />
     </section>
   );

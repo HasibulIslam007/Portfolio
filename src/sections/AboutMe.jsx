@@ -1,65 +1,105 @@
-const AboutMe = () => {
-  const services = [
-    {
-      title: "Frontend Development",
-      desc: "I craft intuitive, responsive interfaces using React, Tailwind, and Next.js — blending performance with great user experience.",
-      icon: "🎨",
-    },
-    {
-      title: "Backend Development",
-      desc: "I build secure, scalable backend systems using Node.js, Express, MongoDB, and RESTful APIs to power seamless app experiences.",
-      icon: "🛠️",
-    },
-    {
-      title: "AI Agents",
-      desc: "I design smart AI agents that solve real-world problems using OpenAI, HuggingFace, and custom LLM pipelines.",
-      icon: "🧠",
-    },
-    {
-      title: "Data Analytics",
-      desc: "I uncover insights from data through Python, Pandas, and visualization — helping decisions backed by logic, not guesswork.",
-      icon: "📊",
-    },
-  ];
+import SectionHeader from "../components/shared/SectionHeader.jsx";
+import Reveal from "../components/shared/Reveal.jsx";
+import Divider from "../components/shared/Divider.jsx";
+import CapabilityList from "../components/About/CapabilityList.jsx";
 
-  return (
-    <section
-      id="about"
-      className="bg-black text-white py-16 px-6 md:px-20 text-center"
+/**
+ * Phase 2A about section — asymmetric editorial layout.
+ *
+ * Desktop: left column carries the "01 / ABOUT" label, headline and
+ * supporting copy; right column holds the numbered capability rows;
+ * a metadata rail closes the section. Mobile stacks everything in a
+ * single column with tighter rhythm.
+ *
+ * Anchor clearance comes from the shared `section { scroll-margin-top }`
+ * rule in index.css (same strategy as Phase 1).
+ */
+// Counts are counted from the verified project data, never asserted as
+// a duration — no employment history or dates are verifiable here.
+const metadata = [
+  { label: "Status", value: "Available for opportunities" },
+  { label: "Currently", value: "IELTSHUB — in development" },
+  { label: "Work", value: "5 projects · 3 live deployments" },
+];
+
+const AboutMe = () => (
+  <section
+    id="about"
+    aria-labelledby="about-heading"
+    className="relative bg-ink text-fg"
+  >
+    {/* Atmosphere: faint red rim glow + film grain (static, cheap) */}
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
-      <div className="max-w-5xl mx-auto">
-        {/* Heading */}
-        <div className="mb-10">
-          <h2 className="text-4xl font-bold mb-2">About Me</h2>
-          <p className="text-gray-300 max-w-3xl text-center mx-auto">
-            I'm a full stack developer with a passion for building clean, fast,
-            and user-focused web apps. I enjoy working across the entire stack —
-            from crafting sleek UIs to designing efficient APIs. Always curious,
-            always learning, I love turning complex problems into simple,
-            elegant solutions. Tech is not just my job — it's what I love doing.
-          </p>
-        </div>
+      <div className="absolute inset-0 bg-[radial-gradient(90%_55%_at_80%_0%,rgba(255,38,56,0.05),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(70%_50%_at_10%_100%,rgba(122,16,24,0.10),transparent_65%)]" />
+      <div className="hero-noise absolute inset-0 opacity-[0.03]" />
+    </div>
 
-        {/* Service Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {services.map((service, index) => (
+    <div className="section-shell">
+      {/* Top rule with expanding crimson lead segment */}
+      <Divider className="mb-9 md:mb-12" />
+
+      <div className="grid gap-y-12 lg:grid-cols-[minmax(0,57fr)_minmax(0,43fr)] lg:gap-x-14 xl:gap-x-20">
+        {/* Left — editorial headline + supporting copy */}
+        <Reveal delay={0.05}>
+          <SectionHeader
+            index="01"
+            label="About"
+            headingId="about-heading"
+            className="lg:pr-6"
+            title={
+              <>
+                I build software at the intersection of engineering and
+                intelligent systems
+                <span className="text-blood">.</span>
+              </>
+            }
+            description={
+              <>
+                <p>
+                  I&rsquo;m <span className="text-fg">Md Hasibul Islam</span>, a
+                  full-stack developer working end to end across the stack —
+                  responsive frontends, backend APIs, authentication, databases
+                  and the application architecture that ties them together —
+                  with a preference for clean, maintainable systems over clever
+                  ones.
+                </p>
+                <p>
+                  I&rsquo;m also interested in applied AI/ML, including the
+                  resume analysis in JobFlow AI and image-editing workflows in
+                  AImage. My focus is on integrating useful features into
+                  complete applications.
+                </p>
+              </>
+            }
+          />
+        </Reveal>
+
+        {/* Right — numbered capability rows */}
+        <CapabilityList />
+      </div>
+
+      {/* Metadata rail */}
+      <Reveal delay={0.15} className="mt-14 md:mt-20">
+        <dl className="flex flex-col gap-3.5 border-t border-hairline pt-5 md:flex-row md:items-baseline md:justify-between md:gap-6">
+          {metadata.map(({ label, value }) => (
             <div
-              key={index}
-              className="bg-[#161616] rounded-2xl p-6 border border-gray-700 shadow-md hover:shadow-lg transition-all leading-relaxed max-w-xl mx-auto text-center"
+              key={label}
+              className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1"
             >
-              <div className="text-yellow-400 text-3xl mb-3 leading-relaxed max-w-xl mx-auto text-center">
-                {service.icon}
-              </div>
-              <h3 className="text-xl font-semibold mb-1 text-white">
-                {service.title}
-              </h3>
-              <p className="text-gray-400 text-sm">{service.desc}</p>
+              <dt className="font-mono text-[10px] font-medium tracking-[0.25em] text-fg-muted uppercase md:text-[11px]">
+                {label}
+              </dt>
+              <dd className="text-sm text-fg">{value}</dd>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+        </dl>
+      </Reveal>
+    </div>
+  </section>
+);
 
 export default AboutMe;

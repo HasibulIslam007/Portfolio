@@ -1,11 +1,10 @@
 import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/all";
+
+import { gsap, ScrollTrigger, useGSAP } from "../../lib/gsap.js";
 
 import { counterItems } from "../../constants";
+import { prefersReducedMotion } from "../../lib/usePrefersReducedMotion";
 
-gsap.registerPlugin(ScrollTrigger);
 const AnimatedCounter = () => {
   const counterRef = useRef(null);
   const countersRef = useRef([]);
@@ -14,6 +13,13 @@ const AnimatedCounter = () => {
     countersRef.current.forEach((counter, index) => {
       const numberElement = counter.querySelector(".counter-number");
       const item = counterItems[index];
+      if (!numberElement || !item) return;
+
+      // Reduced motion: no count-up tween — show the final value at once.
+      if (prefersReducedMotion()) {
+        numberElement.textContent = `${item.value}${item.suffix}`;
+        return;
+      }
 
       // Set initial value to 0
       gsap.set(numberElement, { innerText: "0" });
@@ -40,20 +46,24 @@ const AnimatedCounter = () => {
     <div
       id="counter"
       ref={counterRef}
-      className="grid grid-rows-2 items-center w-full bg-black"
+      className="w-full scroll-mt-[5.5rem] border-y border-hairline bg-ink"
     >
-      <div className="mx-auto grid-2-cols gap-8">
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-px bg-hairline sm:grid-cols-2 md:px-10 xl:px-16">
         {counterItems.map((item, index) => (
-          <div
-            key={index}
-            ref={(el) => el && (countersRef.current[index] = el)}
-            className="bg-zinc-900 rounded-lg p-10 flex flex-col justify-center items-center shadow-lg"
+          <article
+            key={item.label}
+            ref={(el) => {
+              if (el) countersRef.current[index] = el;
+            }}
+            className="flex flex-col items-center justify-center gap-1 bg-ink px-6 py-10 text-center"
           >
-            <div className="counter-number text-white text-5xl font-bold mb-2">
-              0 {item.suffix}
+            <div className="counter-number text-4xl font-semibold tracking-tight text-fg md:text-5xl">
+              0{item.suffix}
             </div>
-            <div className="text-white text-lg text-center">{item.label}</div>
-          </div>
+            <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-fg-muted">
+              {item.label}
+            </div>
+          </article>
         ))}
       </div>
     </div>

@@ -1,0 +1,76 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 3381 >>
+stream
+BT
+/F1 12 Tf 1 0 0 1 54 750.0 Tm (Md Hasibul Islam) Tj
+/F3 9.5 Tf 1 0 0 1 54 730.0 Tm (Full-Stack Developer / Software Engineer) Tj
+/F2 10.5 Tf 1 0 0 1 54 717.5 Tm (hasibulislam.bracu@gmail.com  |  github.com/HasibulIslam007  |  linkedin.com/in/md-hasibul-islam-ooo7) Tj
+/F1 12 Tf 1 0 0 1 54 704.5 Tm (Profile) Tj
+/F3 9.5 Tf 1 0 0 1 54 684.5 Tm (Full-stack developer building web applications end to end: responsive frontends,) Tj
+/F3 9.5 Tf 1 0 0 1 54 672.0 Tm (backend APIs, authentication, databases and the application architecture that) Tj
+/F3 9.5 Tf 1 0 0 1 54 659.5 Tm (connects them. Currently building IELTSHUB, an IELTS practice platform.) Tj
+/F3 9.5 Tf 1 0 0 1 54 647.0 Tm (Secondary interest in applied AI/ML features inside real product applications.) Tj
+/F1 12 Tf 1 0 0 1 54 634.5 Tm (Selected Projects) Tj
+/F2 10.5 Tf 1 0 0 1 54 614.5 Tm (IELTSHUB - IELTS practice platform \(in development\)) Tj
+/F3 9.5 Tf 1 0 0 1 54 601.5 Tm (React exam workspace with local draft recovery, Laravel services for publication,) Tj
+/F3 9.5 Tf 1 0 0 1 54 589.0 Tm (marking and assessment, and a Filament console for admins and teachers. Shared) Tj
+/F3 9.5 Tf 1 0 0 1 54 576.5 Tm (TypeScript contracts published as an OpenAPI specification. Playwright browser) Tj
+/F3 9.5 Tf 1 0 0 1 54 564.0 Tm (tests and PHPUnit suites run in CI on every push.) Tj
+/F3 9.5 Tf 1 0 0 1 54 551.5 Tm (github.com/HasibulIslam007/IELTSHUB) Tj
+/F2 10.5 Tf 1 0 0 1 54 539.0 Tm (JobFlow AI - AI job-search workspace \(live\)) Tj
+/F3 9.5 Tf 1 0 0 1 54 526.0 Tm (Next.js workspace that captures postings from text, PDFs, screenshots and links,) Tj
+/F3 9.5 Tf 1 0 0 1 54 513.5 Tm (tracks applications through a pipeline and matches a resume against each role.) Tj
+/F3 9.5 Tf 1 0 0 1 54 501.0 Tm (Frontend API types are generated from the OpenAPI document; breaking contract) Tj
+/F3 9.5 Tf 1 0 0 1 54 488.5 Tm (changes fail CI.  github.com/HasibulIslam007/jobflow_frontend) Tj
+/F2 10.5 Tf 1 0 0 1 54 476.0 Tm (MarketPlace - full-stack marketplace) Tj
+/F3 9.5 Tf 1 0 0 1 54 463.0 Tm (Next.js storefront over an Express and Prisma API on PostgreSQL, with JWT) Tj
+/F3 9.5 Tf 1 0 0 1 54 450.5 Tm (authentication, catalog management, orders and SSLCommerz sandbox checkout.) Tj
+/F3 9.5 Tf 1 0 0 1 54 438.0 Tm (github.com/HasibulIslam007/MarketPlace) Tj
+/F2 10.5 Tf 1 0 0 1 54 425.5 Tm (AImage - AI image editing \(live\)) Tj
+/F3 9.5 Tf 1 0 0 1 54 412.5 Tm (Colorization, background removal and restoration in one interface, built for) Tj
+/F3 9.5 Tf 1 0 0 1 54 400.0 Tm (speed and simplicity.  github.com/HasibulIslam007/aimage) Tj
+/F2 10.5 Tf 1 0 0 1 54 387.5 Tm (HomeHunt - rental housing platform \(live\)) Tj
+/F3 9.5 Tf 1 0 0 1 54 374.5 Tm (Typed Next.js platform with smart search filters, broker-free listings, contact) Tj
+/F3 9.5 Tf 1 0 0 1 54 362.0 Tm (forms and role-based access via JWT.  github.com/HasibulIslam007/homehunt_frontend) Tj
+/F1 12 Tf 1 0 0 1 54 349.5 Tm (Technical Skills) Tj
+/F3 9.5 Tf 1 0 0 1 54 329.5 Tm (Frontend - React, Next.js, TypeScript, JavaScript, Tailwind CSS, TanStack Query, Zustand) Tj
+/F3 9.5 Tf 1 0 0 1 54 317.0 Tm (Backend - Node.js, Express, Laravel, Filament, PHP, REST APIs, JWT auth) Tj
+/F3 9.5 Tf 1 0 0 1 54 304.5 Tm (Data - PostgreSQL, MongoDB, Prisma) Tj
+/F3 9.5 Tf 1 0 0 1 54 292.0 Tm (Tools - Git, GitHub, Playwright, PHPUnit, CI, Vercel, Render, OpenAPI, Clerk) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000261 00000 n 
+0000003694 00000 n 
+0000003769 00000 n 
+0000003844 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+3914
+%%EOF

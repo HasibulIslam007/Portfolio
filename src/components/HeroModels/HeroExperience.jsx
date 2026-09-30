@@ -1,41 +1,39 @@
-import { OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import { useMediaQuery } from "react-responsive";
-
 import { Two } from "./Two.jsx";
-import HeroLights from "./HeroLights";
-import Particles from "./Particles";
-import { Suspense } from "react";
+import HeroLights from "./HeroLights.jsx";
+import CameraRig from "../hero/CameraRig.jsx";
+import RuneCircle from "../hero/RuneCircle.jsx";
+import EmberParticles from "../hero/EmberParticles.jsx";
 
-const HeroExperience = () => {
-  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-  const isTablet = useMediaQuery({ query: "(max-width: 1024px)" });
-
+/**
+ * Everything that lives inside the hero Canvas.
+ * The model itself (Two.jsx — low-poly isometric room) is untouched;
+ * this component only decides how it is lit, framed and decorated.
+ */
+const HeroExperience = ({
+  base,
+  target,
+  isMobile = false,
+  reduced = false,
+}) => {
   return (
-    <Canvas camera={{ position: [0, 4, 10], fov: 45 }}>
-      {/* deep blue ambient */}
-      <ambientLight intensity={0.2} color="#1a1a40" />
-      {/* Configure OrbitControls to disable panning and control zoom based on device type */}
-      <OrbitControls
-        enablePan={false} // Prevents panning of the scene
-        enableZoom={!isTablet} // Disables zoom on tablets
-        maxDistance={40} // Maximum distance for zooming out
-        minDistance={20} // Minimum distance for zooming in
-        minPolarAngle={Math.PI / 5} // Minimum angle for vertical rotation
-        maxPolarAngle={Math.PI / 2} // Maximum angle for vertical rotation
+    <>
+      <HeroLights intro={!reduced} />
+
+      {/* subtle parallax + cinematic fly-in; never lets the user spin away */}
+      <CameraRig
+        base={base}
+        target={target}
+        enabled={!isMobile && !reduced}
+        reduced={reduced}
       />
 
-      <Suspense fallback={null}>
-        <HeroLights />
-        <Particles count={100} />
-        <group
-          scale={isMobile ? 0.2 : 0.8}
-          position={[10, -4, 0]}
-          rotation={[0, -Math.PI / 7, 0]}
-        ></group>
-      </Suspense>
+      {/* the existing 3D workspace — preserved as-is */}
       <Two />
-    </Canvas>
+
+      {/* atmosphere */}
+      <RuneCircle reduced={reduced} />
+      <EmberParticles count={isMobile ? 28 : 70} reduced={reduced} />
+    </>
   );
 };
 
