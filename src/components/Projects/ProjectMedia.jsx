@@ -8,13 +8,13 @@
  * placeholder — a grid shell with a ghost number, never a fabricated
  * application screen. Both states honour prefers-reduced-motion.
  */
-const ProjectMedia = ({ project, featured = false, className = "" }) => {
-  const { image, mediaNote, number } = project;
+const ProjectMedia = ({ project, featured = false, className = "", chapter = project.number }) => {
+  const { image, mediaNote } = project;
 
   if (image) {
     return (
       <figure
-        className={`group/media relative overflow-hidden border border-hairline bg-ink-2 transition-colors duration-300 group-hover/media:border-blood-line ${className}`}
+        className={`group/media frame-corners relative overflow-hidden border border-hairline bg-ink-2 transition-colors duration-500 group-hover/media:border-blood-line ${className}`}
       >
         <img
           src={image.src}
@@ -23,9 +23,14 @@ const ProjectMedia = ({ project, featured = false, className = "" }) => {
           alt={image.alt}
           loading="lazy"
           decoding="async"
-          className={`block w-full object-cover transition-transform duration-500 ease-out group-hover/media:scale-[1.015] motion-reduce:group-hover/media:scale-100 motion-reduce:transition-none ${
+          className={`block w-full object-cover transition-transform duration-700 ease-out group-hover/media:scale-[1.02] motion-reduce:group-hover/media:scale-100 motion-reduce:transition-none ${
             featured ? "aspect-[16/9]" : ""
           }`}
+        />
+        {/* Crimson edge light along the frame */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blood/60 to-transparent opacity-0 transition-opacity duration-500 group-hover/media:opacity-100"
         />
       </figure>
     );
@@ -33,7 +38,7 @@ const ProjectMedia = ({ project, featured = false, className = "" }) => {
 
   return (
     <div
-      className={`group/media relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden border border-hairline bg-ink-2 transition-colors duration-300 group-hover/media:border-blood-line ${
+      className={`group/media frame-corners relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden border border-hairline bg-ink-2 transition-colors duration-500 group-hover/media:border-blood-line ${
         featured ? "aspect-[16/9]" : ""
       } ${className}`}
     >
@@ -43,7 +48,7 @@ const ProjectMedia = ({ project, featured = false, className = "" }) => {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
           backgroundSize: "56px 56px",
         }}
       />
@@ -55,17 +60,17 @@ const ProjectMedia = ({ project, featured = false, className = "" }) => {
       {/* Ghost project number */}
       <span
         aria-hidden="true"
-        className="absolute right-4 bottom-0 font-mono text-[7rem] leading-none font-medium text-white/[0.035] select-none md:text-[10rem]"
+        className="font-display pointer-events-none absolute right-4 bottom-0 text-[9rem] leading-none text-white/[0.03] select-none md:text-[13rem]"
       >
-        {number}
+        {chapter}
       </span>
 
       <div className="relative z-10 max-w-md px-6 text-center">
-        <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-fg-dim uppercase">
+        <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-silver-dim uppercase">
           Media
         </p>
-        <p className="mt-3 text-base font-medium text-fg">{mediaNote.title}</p>
-        <p className="mt-2 text-sm leading-relaxed text-fg-muted">
+        <p className="font-display mt-3 text-2xl text-parchment">{mediaNote.title}</p>
+        <p className="mt-3 text-sm leading-relaxed text-fg-muted">
           {mediaNote.detail}
         </p>
       </div>

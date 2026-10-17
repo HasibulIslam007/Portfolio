@@ -16,12 +16,18 @@ const TechStrip = ({ delay = 1.5 }) => {
       initial={reduced ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.6, ease: "easeOut" }}
-      className="relative z-10 border-t border-hairline py-5"
+      className="relative z-10 border-t border-hairline py-6"
     >
+      {/* a short crimson segment where the rule starts — the same
+          "bright segment where two surfaces meet" device used elsewhere */}
+      <span
+        aria-hidden="true"
+        className="absolute -top-px left-0 h-px w-28 bg-gradient-to-r from-blood to-transparent"
+      />
       <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-between md:gap-x-8">
         {heroTech.map((tech, index) => (
           <li key={tech} className="flex items-center gap-5 md:gap-8">
-            <span className="font-mono text-[10px] tracking-[0.28em] text-fg-dim transition-colors duration-300 hover:text-fg-muted md:text-[11px]">
+            <span className="font-mono text-[10px] tracking-[0.28em] text-fg-dim transition-colors duration-300 hover:text-silver md:text-[11px]">
               {tech}
             </span>
             {index < heroTech.length - 1 && (

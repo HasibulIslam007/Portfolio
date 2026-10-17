@@ -4,13 +4,22 @@ import ProjectLinks from "./ProjectLinks.jsx";
 import ProjectMedia from "./ProjectMedia.jsx";
 
 /**
- * The flagship case study (IELTSHUB). Clear step up in hierarchy from
- * the regular rows: flagship badge, oversized number beside a much
- * larger title, meta rail, three-column Problem / Contribution /
- * Highlights breakdown, prominent CTAs — then a large, full-width
- * media frame that dominates the block.
+ * Design V2 flagship presentation.
+ *
+ * Rendered for whatever project carries the `featured` flag in
+ * constants/projects.js, labelled "CHAPTER <n> · FLAGSHIP" where <n> is
+ * derived from the project's position in the data array. A chapter marker
+ * and oversized serif title sit against near-black on the left; the
+ * product media gets the dominant area on the right. Deliberately NOT a
+ * rounded SaaS card — the composition is open, framed only by 1px
+ * architectural rules and corner ticks, with a crimson spine on the left.
+ *
+ * Copy, tags and links all come from constants/projects.js, so nothing
+ * here is invented and every URL stays verifiable. A project without
+ * `problem`/`contribution` simply omits that copy; one without an image
+ * falls back to the honest mediaNote placeholder in ProjectMedia.
  */
-const FeaturedProject = ({ project }) => {
+const FeaturedProject = ({ project, chapter = project.number }) => {
   const meta = [
     { label: "Category", value: project.category },
     ...(project.status ? [{ label: "Status", value: project.status }] : []),
@@ -19,56 +28,89 @@ const FeaturedProject = ({ project }) => {
   return (
     <article
       aria-labelledby={`${project.id}-title`}
-      className="group scroll-mt-24"
+      className="group relative"
     >
-      <Reveal>
+      {/* Crimson spine + faint geometric fragments */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-px bg-gradient-to-b from-blood/70 via-blood/25 to-transparent lg:block"
+      />
+
+      {/* Asymmetric cinematic composition: text column left, the project
+          itself given the dominant media area on the right. The CTAs live
+          in the second grid row so mobile reads text → media → links. */}
+      <div className="lg:pl-10">
         <div className="grid gap-y-9 lg:grid-cols-12 lg:gap-x-14">
           {/* Headline block */}
-          <div className="lg:col-span-8">
-            <p className="inline-flex items-center gap-2.5 border border-blood-line bg-blood/[0.07] px-3 py-1.5 font-mono text-[10px] font-medium tracking-[0.28em] text-fg uppercase">
-              <span aria-hidden="true" className="size-1.5 bg-blood" />
-              Current / Flagship Project
+          <Reveal className="lg:col-span-5 lg:row-start-1">
+            <p className="inline-flex items-center gap-2.5 border-l-2 border-blood bg-blood/[0.06] py-1.5 pr-4 pl-3.5 font-mono text-[10px] font-medium tracking-[0.3em] text-fg-muted uppercase">
+              Chapter {chapter}
+              <span className="text-blood-deep" aria-hidden="true">
+                •
+              </span>
+              Flagship
             </p>
 
-            <div className="mt-7 flex flex-wrap items-baseline gap-x-6 gap-y-2">
-              <span
-                aria-hidden="true"
-                className="font-mono text-5xl leading-none font-medium text-fg-dim transition-colors duration-300 group-hover:text-blood group-focus-within:text-blood md:text-7xl"
-              >
-                {project.number}
-              </span>
-              <h3
-                id={`${project.id}-title`}
-                className="text-[2.25rem] leading-[1.05] font-semibold tracking-[-0.02em] text-fg sm:text-5xl xl:text-6xl"
-              >
-                {project.title}
-              </h3>
-            </div>
+            <h3
+              id={`${project.id}-title`}
+              className="font-display mt-7 text-[3rem] leading-[0.95] text-parchment sm:text-[4.25rem] lg:text-[4.5rem]"
+            >
+              {project.title}
+            </h3>
 
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-fg-muted md:text-lg">
+            <p className="mt-6 text-base leading-relaxed text-fg-muted md:text-lg">
               {project.summary}
             </p>
-          </div>
 
-          {/* Meta rail */}
-          <dl className="flex flex-col gap-3.5 border-t border-hairline pt-5 lg:col-span-4 lg:self-start lg:border-t-0 lg:pt-2">
-            {meta.map(({ label, value }) => (
-              <div key={label} className="flex items-baseline gap-3">
-                <dt className="font-mono text-[10px] font-medium tracking-[0.25em] text-fg-muted uppercase md:text-[11px]">
-                  {label}
-                </dt>
-                <dd className="text-sm text-fg">{value}</dd>
-              </div>
-            ))}
-          </dl>
+            {/* Meta rail */}
+            <dl className="mt-8 flex flex-col gap-3.5 border-t border-hairline pt-5">
+              {meta.map(({ label, value }) => (
+                <div key={label} className="flex items-baseline gap-3">
+                  <dt className="font-mono text-[10px] font-medium tracking-[0.25em] text-fg-muted uppercase md:text-[11px]">
+                    {label}
+                  </dt>
+                  <dd className="text-sm text-fg">{value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <TechTags tags={project.stack} className="mt-7" />
+          </Reveal>
+
+          {/* Media — the dominant visual proof, framed by crimson atmosphere */}
+          <Reveal
+            delay={0.08}
+            className="lg:col-span-7 lg:row-span-2 lg:row-start-1 lg:self-start"
+          >
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-5 bg-[radial-gradient(58%_58%_at_55%_42%,rgba(255,38,56,0.07),transparent_72%)]"
+              />
+              <ProjectMedia
+                project={project}
+                chapter={chapter}
+                featured
+                className="relative"
+              />
+            </div>
+          </Reveal>
+
+          {/* CTAs — after the media on mobile, under the text on desktop */}
+          <Reveal
+            delay={0.14}
+            className="lg:col-span-5 lg:row-start-2 lg:self-start"
+          >
+            <ProjectLinks project={project} featured />
+          </Reveal>
         </div>
-      </Reveal>
+      </div>
 
       {/* Problem / Contribution / Highlights breakdown */}
       <Reveal delay={0.08}>
-        <div className="mt-10 grid gap-x-12 gap-y-9 border-t border-hairline pt-8 md:mt-12 md:grid-cols-3">
+        <div className="mt-12 grid gap-x-12 gap-y-9 border-t border-hairline pt-9 lg:pl-10 md:mt-14 md:grid-cols-3">
           <div>
-            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-fg-dim uppercase">
+            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-silver-dim uppercase">
               Problem
             </p>
             <p className="mt-3 text-sm leading-relaxed text-fg-muted">
@@ -77,7 +119,7 @@ const FeaturedProject = ({ project }) => {
           </div>
 
           <div>
-            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-fg-dim uppercase">
+            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-silver-dim uppercase">
               Contribution
             </p>
             <p className="mt-3 text-sm leading-relaxed text-fg-muted">
@@ -86,7 +128,7 @@ const FeaturedProject = ({ project }) => {
           </div>
 
           <div>
-            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-fg-dim uppercase">
+            <p className="font-mono text-[10px] font-medium tracking-[0.3em] text-silver-dim uppercase">
               Highlights
             </p>
             <ul className="mt-3 space-y-2.5">
@@ -97,7 +139,7 @@ const FeaturedProject = ({ project }) => {
                 >
                   <span
                     aria-hidden="true"
-                    className="mt-[0.55em] h-1 w-1 shrink-0 bg-blood/80"
+                    className="mt-[0.55em] h-px w-3 shrink-0 bg-blood/70"
                   />
                   {item}
                 </li>
@@ -107,15 +149,6 @@ const FeaturedProject = ({ project }) => {
         </div>
       </Reveal>
 
-      {/* Tags + prominent CTAs, then the large media frame */}
-      <Reveal delay={0.12}>
-        <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-5">
-          <TechTags tags={project.stack} />
-          <ProjectLinks project={project} featured className="lg:ml-auto" />
-        </div>
-
-        <ProjectMedia project={project} featured className="mt-10 md:mt-12" />
-      </Reveal>
     </article>
   );
 };

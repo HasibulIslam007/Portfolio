@@ -12,7 +12,7 @@ import ProjectMedia from "./ProjectMedia.jsx";
  * the mobile reading sequence is always deliberate:
  * number → meta → title → description → highlights → tags → image → CTAs.
  */
-const ProjectCaseStudy = ({ project, mediaSide = "right" }) => {
+const ProjectCaseStudy = ({ project, chapter = project.number, mediaSide = "right" }) => {
   const mediaLeft = mediaSide === "left";
 
   const contentPos = mediaLeft ? "lg:col-start-2" : "lg:col-start-1";
@@ -35,7 +35,7 @@ const ProjectCaseStudy = ({ project, mediaSide = "right" }) => {
           aria-hidden="true"
           className="block font-mono text-4xl leading-none font-medium text-fg-dim transition-colors duration-300 group-hover:text-blood group-focus-within:text-blood md:text-5xl"
         >
-          {project.number}
+          {chapter}
         </span>
 
         <dl className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1.5">
@@ -92,7 +92,7 @@ const ProjectCaseStudy = ({ project, mediaSide = "right" }) => {
         delay={0.06}
         className={`${mediaPos} lg:row-span-2 lg:row-start-1 lg:self-start`}
       >
-        <ProjectMedia project={project} />
+        <ProjectMedia project={project} chapter={chapter} />
       </Reveal>
 
       {/* CTAs — after the media on mobile, bottom-aligned beside it on desktop */}

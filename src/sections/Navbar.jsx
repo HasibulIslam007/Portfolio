@@ -80,7 +80,7 @@ const NavBar = () => {
         <a
           href="#hero"
           aria-label="HSBL — back to top"
-          className="font-mono text-lg font-bold tracking-tight text-fg transition-colors duration-300 hover:text-blood"
+          className="inline-flex min-h-11 items-center font-mono text-lg font-bold tracking-tight text-fg transition-colors duration-300 hover:text-blood"
         >
           HSBL<span className="text-blood">.</span>
         </a>

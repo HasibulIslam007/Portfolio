@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -13,12 +13,19 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  background-color: #030303;
   color: #f5f5f5;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-family: "Mona Sans", sans-serif;
+}
+
+/* The canvas base lives on <html> only. <body> stays transparent so the
+   fixed ambient layer (z-index: -1, see `.ambient-bg`) is not painted
+   over by the body box background — sections paint no opaque fill either,
+   so distant light shows through the whole page. */
+html {
+  background-color: #030303;
 }
 
 section {
@@ -28,9 +35,104 @@ section {
   scroll-margin-top: 5.5rem;
 }
 
+/* Let the global ambient layer cross section boundaries as intended. The Hero
+   keeps its own opaque cinematic stage; later sections retain their local
+   gradients/noise while allowing the distant fixed light to show through. */
+section:not(#hero) {
+  background-color: transparent;
+}
+
+/* ---------- Global ambient background (final QA pass) ----------
+   ONE fixed, pointer-events-free layer behind the whole site. Sections
+   no longer paint an opaque bg-ink (the <html> element carries the
+   #030303 base), so this reads as distant atmospheric light crossing
+   every section boundary instead of a coloured page background.
+
+   Three soft pieces: deep crimson light high on the right (where every
+   section stages its artifact), a much fainter wash low on the left,
+   and a gentle vignette that keeps the frame cinematic. The glows drift
+   ±34px and zoom 1.0 → 1.05 on 26s/28s transform+opacity-only loops —
+   slow and small enough that you should not consciously notice them —
+   and both stop entirely under prefers-reduced-motion.
+
+   Gradients + transform only: no canvas, no blur(), no new dependency. */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-layer {
+  position: absolute;
+  /* bleed past the viewport so the drift never exposes a hard edge */
+  inset: -8%;
+  display: block;
+}
+
+.ambient-glow-upper {
+  background: radial-gradient(
+    56% 46% at 78% 12%,
+    rgba(130, 18, 28, 0.28),
+    transparent 72%
+  );
+  animation: ambient-drift-a 26s ease-in-out infinite alternate;
+}
+
+.ambient-glow-lower {
+  background: radial-gradient(
+    50% 44% at 8% 92%,
+    rgba(120, 16, 26, 0.18),
+    transparent 74%
+  );
+  animation: ambient-drift-b 28s ease-in-out infinite alternate;
+}
+
+.ambient-vignette {
+  background: radial-gradient(
+    130% 100% at 50% 50%,
+    transparent 52%,
+    rgba(3, 3, 4, 0.4) 100%
+  );
+}
+
+@keyframes ambient-drift-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.88;
+  }
+  100% {
+    transform: translate3d(-34px, 24px, 0) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes ambient-drift-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(30px, -22px, 0) scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow-upper,
+  .ambient-glow-lower {
+    animation: none;
+  }
+}
+
 @theme {
   --font-sans: "Mona Sans", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Design V2 — cinematic display serif for the large headings.
+     Body/UI stays on the sans so text remains highly legible. */
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
   --color-white-50: #d9ecff;
   --color-black-50: #1c1c21;
   --color-black-100: #0e0e10;
@@ -46,10 +148,18 @@ section {
   --color-blood-deep: #7a1018;
   --color-fg: #f5f5f5;
   --color-fg-muted: #a1a1aa;
-  --color-fg-dim: #71717a;
+  /* lifted from #71717a (4.1:1 on the near-black base) to #7c8089 (5.0:1)
+     so mono metadata / placeholders clear WCAG AA without changing the
+     visual hierarchy — still clearly dimmer than fg-muted. */
+  --color-fg-dim: #7c8089;
   --color-hairline: rgba(255, 255, 255, 0.08);
   --color-blood-line: rgba(255, 38, 56, 0.3);
   --color-blood-glow: rgba(255, 38, 56, 0.2);
+
+  /* Design V2 — warm off-white + subtle metallic/silver detail */
+  --color-parchment: #efe7dc;
+  --color-silver: #b8bcc4;
+  --color-silver-dim: #7c8089;
 }
 
 @layer utilities {
@@ -63,8 +173,375 @@ section {
     background-size: 160px 160px;
   }
 
+  /* THE RECTANGLE FIX.
+     The hero canvas is transparent, so the stage needs no painted background.
+     What it does need is for the four straight edges to stop existing, which
+     is done with a mask built from three layers COMPOSITED BY INTERSECTION:
+
+       1. an ellipse — the general dissolve, biased right/down so the falloff
+          hugs the room and leaves the text column alone;
+       2. a horizontal ramp — forces alpha to 0 in the outer ~9% left/right;
+       3. a vertical ramp — the same for the top/bottom.
+
+     Layer 1 alone was NOT enough. The room is deliberately framed wider than
+     the stage (the isometric cutaway's bounding box overshoots its silhouette),
+     so its left wall is genuinely cropped by the canvas — and a gentle mask
+     still left a hard 75-luminance step right on the stage boundary. Layers 2
+     and 3 are what kill that step: the crop now happens in a band that is
+     already transparent, so the room emerges out of darkness instead of being
+     sliced off by a canvas.
+
+     Browsers without `mask-composite` fall back to union, which degrades to
+     the old behaviour rather than breaking the layout.
+
+     The geometry is expressed as custom properties because the feather width
+     has to track how far the room actually bleeds past the stage, and that
+     changes with the breakpoint: at 768 the room fits inside the stage almost
+     entirely (measured seam 0.1–1.0), while at 375 it overflows by ~14.5% per
+     side, so 7% of a 335px stage — 23px — was not enough to hide the crop and
+     left a visible step. The ramp is widened to 17% only on phones. */
   .hero-stage {
-    @apply relative h-[52vh] min-h-[300px] w-full sm:h-[56vh] lg:h-[66vh] lg:min-h-[520px];
+    @apply relative h-[52vh] min-h-[300px] w-full sm:h-[56vh] lg:h-[74vh] lg:min-h-[560px];
+
+    --stage-ellipse: 88% 84%;
+    --stage-center: 53% 52%;
+    --stage-core: 40%;
+    --stage-edge-x: 9%;
+    --stage-edge-y: 7%;
+
+    -webkit-mask-image: radial-gradient(
+        var(--stage-ellipse) at var(--stage-center),
+        #000 var(--stage-core),
+        rgba(0, 0, 0, 0.62) 72%,
+        rgba(0, 0, 0, 0) 100%
+      ),
+      linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0) 0%,
+        #000 var(--stage-edge-x),
+        #000 calc(100% - var(--stage-edge-x)),
+        rgba(0, 0, 0, 0) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        #000 var(--stage-edge-y),
+        #000 calc(100% - var(--stage-edge-y)),
+        rgba(0, 0, 0, 0) 100%
+      );
+    mask-image: radial-gradient(
+        var(--stage-ellipse) at var(--stage-center),
+        #000 var(--stage-core),
+        rgba(0, 0, 0, 0.62) 72%,
+        rgba(0, 0, 0, 0) 100%
+      ),
+      linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0) 0%,
+        #000 var(--stage-edge-x),
+        #000 calc(100% - var(--stage-edge-x)),
+        rgba(0, 0, 0, 0) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        #000 var(--stage-edge-y),
+        #000 calc(100% - var(--stage-edge-y)),
+        rgba(0, 0, 0, 0) 100%
+      );
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Stacked layouts are wider than they are tall, so the ellipse is widened
+     to match. */
+  @media (max-width: 1023px) {
+    .hero-stage {
+      --stage-ellipse: 98% 88%;
+      --stage-center: 50% 52%;
+      --stage-core: 46%;
+      --stage-edge-x: 7%;
+      --stage-edge-y: 6%;
+    }
+  }
+
+  /* Phones: the room overflows the stage by ~14.5% on each side, so the
+     horizontal feather has to be wide enough to cover the cut. */
+  @media (max-width: 480px) {
+    .hero-stage {
+      --stage-edge-x: 17%;
+      --stage-edge-y: 8%;
+    }
+  }
+
+  /* Atmosphere that sits *outside* the WebGL canvas. This stands in for the
+     bloom pass that had to go away with the opaque canvas — but it is kept
+     deliberately weak and placed at the room's own light sources (the window
+     high on the right, the desk, the floor bounce). `screen` blending makes it
+     purely additive, so it can only ever add light; the first pass at these
+     values washed the whole room pink, which is the same mistake as turning
+     up the red rig everywhere. */
+  .hero-spill {
+    background-image: radial-gradient(
+        24% 22% at 60% 33%,
+        rgba(255, 38, 56, 0.12),
+        transparent 72%
+      ),
+      radial-gradient(
+        26% 20% at 45% 70%,
+        rgba(255, 130, 80, 0.05),
+        transparent 74%
+      ),
+      radial-gradient(
+        58% 26% at 52% 94%,
+        rgba(122, 16, 24, 0.14),
+        transparent 76%
+      );
+    mix-blend-mode: screen;
+  }
+
+  /* The single rune. Masked to a soft ellipse so its arcs thin out and vanish
+     long before they could reach the text column — the rune is only ever
+     meant to be half-seen around the room, never read as a diagram. */
+  .hero-rune {
+    -webkit-mask-image: radial-gradient(
+      52% 52% at 50% 50%,
+      #000 30%,
+      rgba(0, 0, 0, 0.4) 62%,
+      transparent 88%
+    );
+    mask-image: radial-gradient(
+      52% 52% at 50% 50%,
+      #000 30%,
+      rgba(0, 0, 0, 0.4) 62%,
+      transparent 88%
+    );
+  }
+
+  /* ---------- About: Astas sword GLB stage ----------
+     A REPLACEMENT FOR A CARD, NOT A CARD.
+
+     Same intent as the hero stage: the canvas is transparent, so the only thing
+     that could betray it is the four straight edges where the render stops. An
+     ellipse plus horizontal/vertical ramps composited BY INTERSECTION force
+     alpha to 0 well before each edge, so the sword emerges from the section's
+     own ink instead of sitting inside a visible box.
+
+     The model is centred and never scaled to fill, so at every breakpoint the
+     ramps are wide enough that no crop ever lands on an opaque pixel. */
+
+  .astas-figure {
+    @apply relative w-full;
+  }
+
+  .astas-stage {
+    --edge-x: 12%;
+    --edge-y: 10%;
+
+    /* Desktop is deliberately much taller than tablet/phone: the left column is
+       ~1140px of copy, and a 560px stage left ~580px of dead space beneath the
+       model. Raising it also renders the blade larger, which is the whole
+       problem with an asset whose blade is 4% of its own rock's width. */
+    @apply relative h-[320px] w-full overflow-hidden md:h-[440px] lg:h-[660px];
+    /* A vertical drag must still scroll the page; the stage only reads
+       horizontal pointer travel, so pan-y is the whole interaction contract. */
+    touch-action: pan-y;
+
+    -webkit-mask-image: radial-gradient(78% 74% at 50% 50%, #000 54%, rgba(0, 0, 0, 0.5) 84%, rgba(0, 0, 0, 0) 100%), linear-gradient(to right, rgba(0, 0, 0, 0) 0%, #000 var(--edge-x), #000 calc(100% - var(--edge-x)), rgba(0, 0, 0, 0) 100%), linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #000 var(--edge-y), #000 calc(100% - var(--edge-y)), rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(78% 74% at 50% 50%, #000 54%, rgba(0, 0, 0, 0.5) 84%, rgba(0, 0, 0, 0) 100%), linear-gradient(to right, rgba(0, 0, 0, 0) 0%, #000 var(--edge-x), #000 calc(100% - var(--edge-x)), rgba(0, 0, 0, 0) 100%), linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #000 var(--edge-y), #000 calc(100% - var(--edge-y)), rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Faint crimson bloom pooled behind the model — the only colour in the stage
+     that is not carried by an actual light. */
+  .astas-glow {
+    @apply pointer-events-none absolute inset-0;
+    background-image: radial-gradient(36% 48% at 52% 55%, rgba(255, 38, 56, 0.22), transparent 68%), radial-gradient(54% 30% at 50% 78%, rgba(122, 16, 24, 0.3), transparent 76%);
+  }
+
+  .astas-haze {
+    @apply pointer-events-none absolute inset-0;
+    background-image: radial-gradient(58% 22% at 67% 75%, rgba(112, 116, 126, 0.13), transparent 74%), radial-gradient(52% 21% at 30% 70%, rgba(122, 24, 36, 0.18), transparent 76%);
+    filter: blur(14px);
+  }
+
+  /* The single rune circle, oversized so its arcs run off the stage and are only
+     ever half-seen. Reuses the shared original geometry at very low opacity. */
+  .astas-rune {
+    @apply pointer-events-none absolute top-[47%] left-1/2 h-[108%] w-[108%] -translate-x-1/2 -translate-y-1/2 text-blood;
+    opacity: 0.78;
+  }
+
+  .astas-ember {
+    box-shadow: 0 0 8px rgba(255, 38, 56, 0.65);
+  }
+
+  /* Contact shadow, so the rock sits on something instead of floating. */
+  .astas-shadow {
+    @apply pointer-events-none absolute bottom-[10%] left-1/2 h-[14%] w-[64%] -translate-x-1/2;
+    background-image: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.9), transparent 74%);
+  }
+
+  .astas-vignette {
+    @apply pointer-events-none absolute inset-0;
+    background:
+      linear-gradient(to bottom, transparent 67%, rgba(3, 3, 4, 0.82) 96%),
+      radial-gradient(ellipse at 50% 46%, transparent 42%, rgba(3, 3, 4, 0.68) 100%);
+  }
+
+  @media (max-width: 767px) {
+    .astas-rune {
+      width: 96%;
+      height: 96%;
+      opacity: 0.38;
+    }
+
+    .astas-haze {
+      opacity: 0.55;
+    }
+
+    .astas-ember:nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  /* ---------- Tech Stack: cinematic pseudo-3D grimoire + editorial rows ---------- */
+  .grimoire-stage {
+    @apply relative h-[290px] w-full overflow-hidden md:h-[380px] lg:h-[460px];
+    perspective: 1100px;
+    touch-action: pan-y;
+    contain: layout paint;
+  }
+
+  .grimoire-back,
+  .grimoire-glow,
+  .grimoire-rune,
+  .grimoire-haze,
+  .grimoire-embers,
+  .grimoire-vignette {
+    @apply pointer-events-none absolute inset-0;
+  }
+
+  .grimoire-back {
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .grimoire-glow {
+    background: radial-gradient(37% 48% at 52% 52%, rgba(255, 38, 56, 0.19), transparent 70%), radial-gradient(54% 25% at 50% 76%, rgba(122, 16, 24, 0.2), transparent 76%);
+  }
+
+  .grimoire-rune {
+    @apply top-1/2 left-1/2 h-[92%] w-[92%] -translate-x-1/2 -translate-y-1/2 text-blood;
+    opacity: 0.52;
+  }
+
+  .grimoire-haze {
+    background: radial-gradient(48% 20% at 28% 70%, rgba(86, 88, 96, 0.13), transparent 76%), radial-gradient(44% 18% at 75% 68%, rgba(122, 16, 24, 0.14), transparent 76%);
+    filter: blur(12px);
+  }
+
+  .grimoire-embers i {
+    @apply absolute rounded-full bg-blood;
+    box-shadow: 0 0 7px rgba(255, 38, 56, 0.7);
+    animation: grimoire-ember 8s ease-in-out infinite;
+  }
+
+  .grimoire-vignette {
+    z-index: 4;
+    background: radial-gradient(ellipse at 50% 48%, transparent 42%, rgba(3, 3, 4, 0.42) 76%, rgba(3, 3, 4, 0.94) 100%), linear-gradient(to bottom, rgba(3, 3, 4, 0.18), transparent 24%, transparent 72%, rgba(3, 3, 4, 0.92) 100%);
+  }
+
+  .grimoire-artifact {
+    @apply pointer-events-none absolute inset-0 z-[2] flex items-center justify-center;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .grimoire-float {
+    @apply relative flex h-full w-full items-center justify-center;
+    animation: grimoire-float 6.5s ease-in-out infinite;
+    transform-style: preserve-3d;
+  }
+
+  .grimoire-artifact img {
+    @apply block h-auto w-[98%] max-w-none select-none object-contain;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 49%, #000 45%, rgba(0, 0, 0, 0.88) 68%, transparent 98%);
+    mask-image: radial-gradient(ellipse at 50% 49%, #000 45%, rgba(0, 0, 0, 0.88) 68%, transparent 98%);
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.76)) drop-shadow(8px 3px 17px rgba(136, 12, 30, 0.16));
+  }
+
+  .grimoire-glare {
+    @apply pointer-events-none absolute inset-[7%] rounded-[50%] opacity-50 mix-blend-screen;
+    -webkit-mask-image: radial-gradient(ellipse, #000, transparent 72%);
+    mask-image: radial-gradient(ellipse, #000, transparent 72%);
+  }
+
+  @keyframes grimoire-float {
+    0%, 100% { transform: translate3d(0, 0, 0) rotateZ(-0.2deg); }
+    50% { transform: translate3d(0, -5px, 0) rotateZ(0.2deg); }
+  }
+
+  @keyframes grimoire-ember {
+    0%, 100% { opacity: 0.18; transform: translate3d(0, 7px, 0); }
+    50% { opacity: 0.62; transform: translate3d(5px, -9px, 0); }
+  }
+
+  .tech-capability-row {
+    transition: border-color 220ms ease;
+  }
+
+  .tech-capability-row:hover {
+    border-color: rgba(255, 38, 56, 0.28);
+  }
+
+  .tech-token {
+    @apply flex min-h-14 items-center gap-2.5 border border-hairline bg-white/[0.025] px-3 py-2.5 text-xs text-fg-muted;
+    transition: transform 180ms ease, border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+  }
+
+  .tech-token:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 38, 56, 0.3);
+    background-color: rgba(255, 255, 255, 0.04);
+    color: var(--color-fg);
+  }
+
+  .tech-token-icon {
+    @apply h-[21px] w-[21px] shrink-0 opacity-85;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .tech-token:hover .tech-token-icon {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  @media (max-width: 767px) {
+    .grimoire-rune { height: 82%; width: 82%; opacity: 0.4; }
+    .grimoire-haze { opacity: 0.55; }
+    .grimoire-embers i:nth-child(n + 4) { display: none; }
+    .grimoire-artifact img { width: 100%; }
+  }
+
+  .grimoire-stage[data-active] .grimoire-float {
+    animation-play-state: paused;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .grimoire-artifact,
+    .grimoire-back,
+    .grimoire-embers { transform: none !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grimoire-float,
+    .grimoire-embers i { animation: none; }
+
+    .grimoire-artifact,
+    .grimoire-back,
+    .grimoire-embers { transform: none !important; }
   }
 
   /* Phase 1 — navbar */
@@ -103,6 +580,222 @@ section {
 
   .nav-link.is-active {
     @apply text-blood;
+  }
+
+  /* ---------- Design V2: cinematic dark-fantasy utilities ---------- */
+
+  /* Large display headings. Serif at a heavy weight with tight leading
+     reads cinematic rather than "fantasy prop". */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 0.94;
+  }
+
+  /* Architectural hairline: a single bright segment where two surfaces
+     meet, used to divide editorial blocks. */
+  .rule-architectural {
+    @apply relative h-px w-full bg-hairline;
+  }
+
+  .rule-architectural::before {
+    content: "";
+    @apply absolute inset-y-0 left-0 w-16 bg-silver-dim;
+  }
+
+  /* Corner ticks — architectural framing, 1px strokes only. */
+  .frame-corners {
+    position: relative;
+  }
+
+  .frame-corners::before,
+  .frame-corners::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(184, 188, 196, 0.22);
+    border-style: solid;
+    border-width: 0;
+    pointer-events: none;
+  }
+
+  .frame-corners::before {
+    top: 0;
+    left: 0;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  .frame-corners::after {
+    right: 0;
+    bottom: 0;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  /* Soft smoke/fog wash — static gradients only, no blur filters, so it
+     costs nothing to composite on mobile. */
+  .smoke-wash {
+    background-image:
+      radial-gradient(
+        45% 35% at 20% 25%,
+        rgba(120, 24, 32, 0.14),
+        transparent 70%
+      ),
+      radial-gradient(
+        38% 30% at 78% 68%,
+        rgba(60, 62, 72, 0.16),
+        transparent 72%
+      );
+  }
+
+  /* Hero only — the smoke drifts on a slow, transform-only loop so the
+     compositor does the work and nothing repaints per frame. Paused by the
+     global prefers-reduced-motion block at the bottom of this file. */
+  @keyframes smoke-drift {
+    0% {
+      transform: translate3d(-1.5%, -1%, 0) scale(1.06);
+    }
+    50% {
+      transform: translate3d(1.5%, 1.2%, 0) scale(1.14);
+    }
+    100% {
+      transform: translate3d(-1.5%, -1%, 0) scale(1.06);
+    }
+  }
+
+  .smoke-drift {
+    animation: smoke-drift 54s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  /* Hero ground — a hair of warmth at the top edge, dead black at the base,
+     so the section never reads as a flat #030303 rectangle. */
+  .hero-backdrop {
+    background-image: linear-gradient(
+      180deg,
+      #0b0709 0%,
+      #070608 34%,
+      #030303 68%,
+      #050304 100%
+    );
+  }
+
+  /* Architectural hairlines — the faintest possible drafting grid. It is
+     masked away from the text column entirely and kept barely-there
+     everywhere else, so it reads as texture rather than as a HUD. */
+  .hero-grid {
+    background-image: repeating-linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.028) 0 1px,
+        transparent 1px 12.5%
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.02) 0 1px,
+        transparent 1px 12.5%
+      );
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 30%,
+        #000 66%,
+        transparent 100%
+      ),
+      linear-gradient(to right, transparent 34%, #000 82%);
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 30%,
+        #000 66%,
+        transparent 100%
+      ),
+      linear-gradient(to right, transparent 34%, #000 82%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Focuses the eye on the middle of the composition. Darker at the corners
+     than the previous version so the right column falls away into black and
+     the canvas edge has nothing to contrast against. */
+  .hero-vignette {
+    background-image: radial-gradient(
+      112% 88% at 54% 46%,
+      transparent 34%,
+      rgba(0, 0, 0, 0.58) 72%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  }
+
+  /* Ember field — a handful of CSS-only motes drifting around the stage.
+     Deliberately outside the canvas: no extra draw calls, no WebGL state,
+     and it survives even if the 3D context is unavailable. Transform/opacity
+     only, so the compositor animates it without repainting.
+
+     Kept soft on purpose. Small, crisp, round points read as a starfield; a
+     mote that is large, blurred, slightly lopsided and dim reads as a piece of
+     lit dust instead. */
+  .hero-ember {
+    position: absolute;
+    border-radius: 50% 42% 56% 46%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 148, 116, 0.5) 0%,
+      rgba(255, 38, 56, 0.2) 34%,
+      rgba(122, 16, 24, 0) 70%
+    );
+    filter: blur(2px);
+    animation: ember-rise linear infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes ember-rise {
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.7);
+      opacity: 0;
+    }
+    14% {
+      opacity: 0.85;
+    }
+    70% {
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate3d(var(--ember-drift, 14px), -46vh, 0) scale(1.15);
+      opacity: 0;
+    }
+  }
+
+  /* Organic, never "starfield": the motes are blurred and irregular, and the
+     whole layer is hidden outright under prefers-reduced-motion so the static
+     composition renders complete immediately. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-ember {
+      display: none;
+    }
+  }
+
+  /* The single accent word — a tight bloom, not a glow-heavy neon. */
+  .text-glow-blood {
+    text-shadow:
+      0 0 18px rgba(255, 38, 56, 0.45),
+      0 0 54px rgba(255, 38, 56, 0.2);
+  }
+
+  /* Metallic text gradient for the single accent word. */
+  .text-silver-edge {
+    background-image: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #d8dae0 38%,
+      #8f939c 70%,
+      #e6e8ec 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }
 

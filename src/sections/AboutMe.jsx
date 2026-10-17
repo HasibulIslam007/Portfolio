@@ -1,103 +1,104 @@
-import SectionHeader from "../components/shared/SectionHeader.jsx";
 import Reveal from "../components/shared/Reveal.jsx";
 import Divider from "../components/shared/Divider.jsx";
+import SectionLabel from "../components/shared/SectionLabel.jsx";
 import CapabilityList from "../components/About/CapabilityList.jsx";
+import AstasSword from "../components/About/AstasSword.jsx";
 
 /**
- * Phase 2A about section — asymmetric editorial layout.
+ * About section — two-column editorial split, 55/45 on desktop.
  *
- * Desktop: left column carries the "01 / ABOUT" label, headline and
- * supporting copy; right column holds the numbered capability rows;
- * a metadata rail closes the section. Mobile stacks everything in a
- * single column with tighter rhythm.
+ * LEFT: section marker, headline, the argument, capabilities.
+ * RIGHT: the sword/rock GLB (AstasSword).
  *
- * Anchor clearance comes from the shared `section { scroll-margin-top }`
- * rule in index.css (same strategy as Phase 1).
+ * WHY THE MODEL IS A COLUMN AND NOT A BANNER. The earlier version put the
+ * visual *below* all the copy, which on a 1440 screen meant a long scroll of
+ * text before anything visual happened, and a dead band after it. Side by side
+ * the section is one screen tall and the sword is visible while the first line
+ * is being read. Below `lg` the grid collapses to one column and DOM order
+ * becomes the mobile stack: label → headline → text → capabilities → model.
+ *
+ * The section-level rune decoration was REMOVED here on purpose: the model
+ * stage now carries the section's single rune circle, and two of them compete.
+ *
+ * `#about` is untouched, so the navbar anchor still resolves. Anchor clearance
+ * comes from the shared `section { scroll-margin-top }` rule in index.css.
+ *
  */
-// Counts are counted from the verified project data, never asserted as
-// a duration — no employment history or dates are verifiable here.
-const metadata = [
-  { label: "Status", value: "Available for opportunities" },
-  { label: "Currently", value: "IELTSHUB — in development" },
-  { label: "Work", value: "5 projects · 3 live deployments" },
-];
-
 const AboutMe = () => (
   <section
     id="about"
     aria-labelledby="about-heading"
-    className="relative bg-ink text-fg"
+    className="relative overflow-hidden bg-ink text-fg"
   >
-    {/* Atmosphere: faint red rim glow + film grain (static, cheap) */}
+    {/* Static, lightweight atmosphere shared by both columns. */}
     <div
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(90%_55%_at_80%_0%,rgba(255,38,56,0.05),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(70%_50%_at_10%_100%,rgba(122,16,24,0.10),transparent_65%)]" />
+      <div className="smoke-wash absolute inset-0 opacity-45" />
+      <div className="absolute inset-0 bg-[radial-gradient(60%_55%_at_78%_50%,rgba(122,16,24,0.11),transparent_70%)]" />
       <div className="hero-noise absolute inset-0 opacity-[0.03]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_48%,rgba(3,3,4,0.5)_100%)]" />
     </div>
 
     <div className="section-shell">
-      {/* Top rule with expanding crimson lead segment */}
       <Divider className="mb-9 md:mb-12" />
 
-      <div className="grid gap-y-12 lg:grid-cols-[minmax(0,57fr)_minmax(0,43fr)] lg:gap-x-14 xl:gap-x-20">
-        {/* Left — editorial headline + supporting copy */}
-        <Reveal delay={0.05}>
-          <SectionHeader
-            index="01"
-            label="About"
-            headingId="about-heading"
-            className="lg:pr-6"
-            title={
-              <>
-                I build software at the intersection of engineering and
-                intelligent systems
-                <span className="text-blood">.</span>
-              </>
-            }
-            description={
-              <>
-                <p>
-                  I&rsquo;m <span className="text-fg">Md Hasibul Islam</span>, a
-                  full-stack developer working end to end across the stack —
-                  responsive frontends, backend APIs, authentication, databases
-                  and the application architecture that ties them together —
-                  with a preference for clean, maintainable systems over clever
-                  ones.
-                </p>
-                <p>
-                  I&rsquo;m also interested in applied AI/ML, including the
-                  resume analysis in JobFlow AI and image-editing workflows in
-                  AImage. My focus is on integrating useful features into
-                  complete applications.
-                </p>
-              </>
-            }
-          />
-        </Reveal>
+      <div className="grid items-center gap-y-11 lg:grid-cols-[55fr_45fr] lg:gap-x-8 xl:gap-x-12">
+        {/* ── LEFT — 55% ── */}
+        <div className="min-w-0">
+          <Reveal delay={0.04}>
+            <SectionLabel index="01">About</SectionLabel>
+          </Reveal>
 
-        {/* Right — numbered capability rows */}
-        <CapabilityList />
-      </div>
-
-      {/* Metadata rail */}
-      <Reveal delay={0.15} className="mt-14 md:mt-20">
-        <dl className="flex flex-col gap-3.5 border-t border-hairline pt-5 md:flex-row md:items-baseline md:justify-between md:gap-6">
-          {metadata.map(({ label, value }) => (
-            <div
-              key={label}
-              className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1"
+          <Reveal delay={0.05}>
+            <h2
+              id="about-heading"
+              className="font-display mt-6 text-[2.75rem] leading-[0.98] text-parchment sm:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem]"
             >
-              <dt className="font-mono text-[10px] font-medium tracking-[0.25em] text-fg-muted uppercase md:text-[11px]">
-                {label}
-              </dt>
-              <dd className="text-sm text-fg">{value}</dd>
+              More than
+              <br />
+              just{" "}
+              <span className="italic text-blood">code</span>
+              <span className="text-blood">.</span>
+            </h2>
+
+            <div className="mt-7 max-w-[42rem] space-y-4 text-[15px] leading-relaxed text-fg-muted md:text-base">
+              <p>
+                I&rsquo;m{" "}
+                <span className="text-fg">Md Hasibul Islam</span>, a full-stack
+                developer. I build complete web applications — the interface
+                people use, the APIs behind it, the authentication and data
+                layers underneath, and the architecture that keeps it
+                maintainable after launch.
+              </p>
+              <p>
+                Most of my work is product-shaped: a real problem, a real user,
+                a system that has to hold together. I care about clean,
+                legible code over clever code, and about shipping something
+                that actually works.
+              </p>
+              <p>
+                I&rsquo;m also drawn to applied AI/ML — not as research, but as
+                useful features inside real products, like resume matching in
+                JobFlow AI and image workflows in AImage.
+              </p>
             </div>
-          ))}
-        </dl>
-      </Reveal>
+          </Reveal>
+
+          {/* Capabilities */}
+          <Reveal delay={0.1} className="mt-8 max-w-[42rem]">
+            <CapabilityList />
+          </Reveal>
+        </div>
+
+        {/* ── RIGHT — 45% ── */}
+        <div className="min-w-0">
+          <Reveal delay={0.08}>
+            <AstasSword />
+          </Reveal>
+        </div>
+      </div>
     </div>
   </section>
 );

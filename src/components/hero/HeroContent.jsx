@@ -72,52 +72,79 @@ const HeroContent = () => {
       ref={rootRef}
       className="relative z-10 flex flex-col gap-6 md:gap-7"
     >
+      {/* Decorative rail: a single crimson hairline with tick marks, echoing
+          the rune dial. Absolutely positioned, so it never affects layout. */}
+      <span
+        aria-hidden="true"
+        className="absolute top-1 bottom-1 -left-8 hidden w-px bg-gradient-to-b from-transparent via-blood-line to-transparent lg:block"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute top-1/4 -left-[3.5px] hidden h-px w-2 bg-blood/50 lg:block"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute top-3/4 -left-[3.5px] hidden h-px w-2 bg-blood/50 lg:block"
+      />
+
       {/* Availability status */}
-      <div className="hero-status inline-flex w-fit items-center gap-2 rounded-full border border-hairline bg-ink-2/80 px-3.5 py-1.5 backdrop-blur-sm">
-        <span className="relative flex size-2" aria-hidden="true">
+      <div className="hero-status inline-flex w-fit items-center gap-2.5 border border-hairline bg-ink-2/60 px-3.5 py-1.5">
+        <span className="relative flex size-1.5" aria-hidden="true">
           <span className="absolute inline-flex size-full animate-ping rounded-full bg-blood opacity-60" />
-          <span className="relative inline-flex size-2 rounded-full bg-blood" />
+          <span className="relative inline-flex size-1.5 rounded-full bg-blood" />
         </span>
-        <span className="font-mono text-[11px] tracking-[0.18em] text-fg-muted uppercase">
+        <span className="font-mono text-[10px] tracking-[0.22em] text-fg-muted uppercase">
           Available for opportunities
         </span>
       </div>
 
       {/* Eyebrow */}
-      <p className="hero-eyebrow font-mono text-[11px] font-medium tracking-[0.3em] text-blood uppercase md:text-xs">
-        Full-Stack Developer{" "}
-        <span className="text-fg-dim" aria-hidden="true">
+      <p className="hero-eyebrow flex items-center gap-3 font-mono text-[10px] font-medium tracking-[0.34em] text-silver-dim uppercase sm:text-[11px]">
+        <span className="h-px w-6 bg-blood" aria-hidden="true" />
+        Full-Stack Developer
+        <span className="text-blood-deep" aria-hidden="true">
           •
-        </span>{" "}
+        </span>
         Software Engineer
       </p>
 
-      {/* Headline */}
-      <h1 className="hero-headline text-[2.35rem] leading-[1.04] font-bold tracking-[-0.02em] text-fg sm:text-5xl lg:text-6xl xl:text-[4rem]">
-        <span className="line block">Building software</span>
-        <span className="line block">that solves</span>
-        <span className="line block text-blood [text-shadow:0_0_45px_rgba(255,38,56,0.35)]">
-          real problems.
+      {/* Headline — cinematic display serif. The crimson word is the only
+          saturated element in the composition, so it also carries the only
+          glow. */}
+      <h1 className="hero-headline font-display text-[3.1rem] text-parchment sm:text-[4.25rem] lg:text-[5.25rem] xl:text-[6rem]">
+        <span className="line block">I build</span>
+        <span className="line block italic text-silver-edge">
+          digital worlds
+        </span>
+        <span className="line block">
+          that <span className="text-blood text-glow-blood">work</span>
+          <span className="text-blood">.</span>
         </span>
       </h1>
 
       {/* Supporting copy */}
       <p className="hero-description max-w-xl text-base leading-relaxed text-fg-muted md:text-lg">
         I&rsquo;m <span className="text-fg">Md Hasibul Islam</span> — a
-        Full-Stack Developer and Software Engineer building web applications,
-        backend APIs and connected product experiences.
+        full-stack developer and software engineer. I design and build web
+        applications end to end: responsive frontends, backend APIs,
+        authentication, databases, and the architecture that holds it
+        together.
       </p>
 
       {/* CTAs */}
       <div className="flex flex-wrap items-center gap-3 md:gap-4">
         <a
           href="#projects"
-          className="hero-cta group inline-flex items-center gap-2 rounded-full bg-blood px-6 py-3 text-sm font-semibold text-[#0a0002] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ff4050] hover:shadow-[0_10px_30px_-10px_rgba(255,38,56,0.7)] md:px-7 md:py-3.5"
+          className="hero-cta group relative inline-flex items-center gap-2.5 overflow-hidden border border-blood-line bg-blood/[0.09] px-7 py-3.5 text-sm font-medium tracking-wide text-parchment transition-all duration-300 hover:border-[rgba(255,38,56,0.55)] hover:bg-blood/[0.16] md:px-8 md:py-4"
         >
-          View My Work
           <span
             aria-hidden="true"
-            className="transition-transform duration-300 group-hover:translate-x-1"
+            className="absolute inset-y-0 -left-full w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent transition-[left] duration-700 ease-out group-hover:left-full motion-reduce:hidden"
+          />
+          Explore My Work
+          <span
+            aria-hidden="true"
+            className="text-blood transition-transform duration-300 group-hover:translate-x-1"
           >
             →
           </span>
@@ -127,9 +154,9 @@ const HeroContent = () => {
           href={resumeUrl}
           target="_blank"
           rel="noreferrer noopener"
-          className="hero-cta group inline-flex items-center gap-2 rounded-full border border-hairline bg-ink-2/60 px-6 py-3 text-sm font-medium text-fg transition-all duration-300 hover:-translate-y-0.5 hover:border-blood-line hover:bg-surface hover:text-blood md:px-7 md:py-3.5"
+          className="hero-cta group inline-flex items-center gap-2.5 border border-hairline bg-ink-2/40 px-7 py-3.5 text-sm font-medium tracking-wide text-fg-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-silver-dim/50 hover:text-fg md:px-8 md:py-4"
         >
-          Download Resume
+          Résumé
           <span
             aria-hidden="true"
             className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
